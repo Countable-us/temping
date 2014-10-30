@@ -2,14 +2,15 @@ require "active_record"
 require "active_support/core_ext/string"
 
 class Temping
-  def self.create(model_name, &block)
-    factory = ModelFactory.new(model_name.to_s.classify, &block)
+  def self.create(model_name, options = {}, &block)
+    factory = ModelFactory.new(model_name.to_s.classify, options, &block)
     factory.klass
   end
 
   class ModelFactory
-    def initialize(model_name, &block)
+    def initialize(model_name, options = {}, &block)
       @model_name = model_name
+      @options = options.merge(:temporary => true)
       klass.class_eval(&block) if block_given?
     end
 
@@ -32,7 +33,7 @@ class Temping
     end
 
     def create_table
-      connection.create_table(table_name, :temporary => true)
+      connection.create_table(table_name, @options)
     end
 
     def add_methods

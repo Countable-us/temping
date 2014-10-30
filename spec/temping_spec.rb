@@ -9,6 +9,11 @@ describe Temping do
       post_class.table_name.should == "posts"
     end
 
+    it "accepts table options" do
+      kitten_class = Temping.create(:kitten, id: :uuid)
+      kitten_class.column_types['id'].sql_type.should == 'uuid'
+    end
+
     it "evaluates block in the model's context" do
       Temping.create :publication do
         with_columns do |table|
